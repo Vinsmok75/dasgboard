@@ -1,0 +1,12 @@
+Django==5.2.1
+djangorestframework==3.14.0
+django-cors-headers==4.3.1
+Pillow==10.2.0  # For image handling
+python-dotenv==1.0.1  # For environment variables
+django-filter==24.1  # For filtering in DRF
+django-storages==1.14.2  # For file storage
+django-crispy-forms==2.1  # For form rendering
+crispy-bootstrap5==2024.2  # Bootstrap 5 template pack for crispy forms
+whitenoise==6.6.0  # For static files serving
+gunicorn==21.2.0  # For production deployment
+psycopg2-binary==2.9.9  # PostgreSQL adapter (if using PostgreSQL) 

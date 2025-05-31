@@ -1,0 +1,73 @@
+{% extends 'dash/base.html' %}
+
+{% block header %}Dashboard Overview{% endblock %}
+
+{% block content %}
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <!-- Total Properties Card -->
+    <div class="bg-white overflow-hidden shadow rounded-lg">
+        <div class="p-5">
+            <div class="flex items-center">
+                <div class="flex-shrink-0 bg-indigo-500 rounded-md p-3">
+                    <i class="fas fa-building text-white text-2xl"></i>
+                </div>
+                <div class="ml-5">
+                    <h3 class="text-lg leading-6 font-medium text-gray-900">Total Properties</h3>
+                    <div class="mt-2 text-3xl font-semibold text-gray-900">
+                        {{ total_properties }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Recent Properties -->
+<div class="mt-8">
+    <h2 class="text-lg leading-6 font-medium text-gray-900 mb-4">Recent Properties</h2>
+    <div class="bg-white shadow overflow-hidden sm:rounded-md">
+        <ul class="divide-y divide-gray-200">
+            {% for property in recent_properties %}
+            <li class="hover:bg-gray-50 transition-colors duration-200">
+                <a href="{% url 'dash:property_edit' property.id %}" class="block">
+                    <div class="px-4 py-4 sm:px-6">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center">
+                                {% if property.main_image %}
+                                <img src="{{ property.main_image }}" alt="{{ property.title }}" class="h-10 w-10 rounded-lg object-cover">
+                                {% else %}
+                                <div class="h-10 w-10 rounded-lg bg-gray-200 flex items-center justify-center">
+                                    <i class="fas fa-image text-gray-400"></i>
+                                </div>
+                                {% endif %}
+                                <div class="ml-4">
+                                    <p class="text-sm font-medium text-indigo-600 truncate">{{ property.title }}</p>
+                                    <p class="text-sm text-gray-500">
+                                        {{ property.location }} • {{ property.property_type|title }}
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="flex items-center">
+                                <p class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                                    {{ property.views_count }} views
+                                </p>
+                                <p class="ml-4 text-sm text-gray-500">
+                                    Added {{ property.created_at|timesince }} ago
+                                </p>
+                                <i class="fas fa-chevron-right ml-4 text-gray-400"></i>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </li>
+            {% empty %}
+            <li class="px-4 py-5 sm:px-6">
+                <div class="text-center text-gray-500">
+                    No properties added yet
+                </div>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+{% endblock %} 

@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real Estate Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .fade-enter {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+        .fade-enter-active {
+            opacity: 1;
+            transform: translateY(0);
+            transition: opacity 300ms, transform 300ms;
+        }
+        .fade-exit {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .fade-exit-active {
+            opacity: 0;
+            transform: translateY(-10px);
+            transition: opacity 300ms, transform 300ms;
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <div class="min-h-screen flex">
+        <!-- Sidebar -->
+        <nav class="bg-gray-800 w-64 min-h-screen p-4">
+            <div class="flex items-center justify-center mb-8">
+                <h1 class="text-white text-2xl font-bold">Real Estate</h1>
+            </div>
+            <ul>
+                <li class="mb-2">
+                    <a href="{% url 'dash:dashboard_home' %}" 
+                       class="flex items-center text-gray-300 hover:bg-gray-700 hover:text-white px-4 py-2 rounded-lg {% if active_page == 'dashboard' %}bg-gray-700 text-white{% endif %}">
+                        <i class="fas fa-home mr-3"></i>
+                        Dashboard
+                    </a>
+                </li>
+                <li class="mb-2">
+                    <a href="{% url 'dash:property_list' %}"
+                       class="flex items-center text-gray-300 hover:bg-gray-700 hover:text-white px-4 py-2 rounded-lg {% if active_page == 'properties' %}bg-gray-700 text-white{% endif %}">
+                        <i class="fas fa-building mr-3"></i>
+                        Properties
+                    </a>
+                </li>
+                <li class="mb-2">
+                    <a href="{% url 'dash:property_create' %}"
+                       class="flex items-center text-gray-300 hover:bg-gray-700 hover:text-white px-4 py-2 rounded-lg {% if active_page == 'create' %}bg-gray-700 text-white{% endif %}">
+                        <i class="fas fa-plus-circle mr-3"></i>
+                        Add Property
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <!-- Main Content -->
+        <div class="flex-1">
+            <!-- Top Bar -->
+            <header class="bg-white shadow-sm">
+                <div class="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8">
+                    <h1 class="text-2xl font-semibold text-gray-900">
+                        {% block header %}{% endblock %}
+                    </h1>
+                </div>
+            </header>
+
+            <!-- Messages -->
+            {% if messages %}
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
+                {% for message in messages %}
+                <div class="rounded-lg p-4 mb-4 {% if message.tags == 'success' %}bg-green-100 text-green-700{% elif message.tags == 'error' %}bg-red-100 text-red-700{% else %}bg-blue-100 text-blue-700{% endif %}"
+                     role="alert">
+                    {{ message }}
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <!-- Page Content -->
+            <main class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+                {% block content %}{% endblock %}
+            </main>
+        </div>
+    </div>
+
+    <!-- Modal Template -->
+    <div id="modal" class="fixed z-10 inset-0 hidden">
+        <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+            <div class="fixed inset-0 transition-opacity">
+                <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
+            </div>
+            <span class="hidden sm:inline-block sm:align-middle sm:h-screen"></span>
+            <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+                <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                    <div class="sm:flex sm:items-start">
+                        <div class="mt-3 text-center sm:mt-0 sm:text-left">
+                            <h3 class="text-lg leading-6 font-medium text-gray-900" id="modal-title"></h3>
+                            <div class="mt-2">
+                                <p class="text-sm text-gray-500" id="modal-content"></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                    <button type="button" id="modal-confirm" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:ml-3 sm:w-auto sm:text-sm">
+                        Confirm
+                    </button>
+                    <button type="button" id="modal-cancel" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:w-auto sm:text-sm">
+                        Cancel
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Modal functionality
+        function showModal(title, content, onConfirm) {
+            const modal = document.getElementById('modal');
+            const modalTitle = document.getElementById('modal-title');
+            const modalContent = document.getElementById('modal-content');
+            const confirmBtn = document.getElementById('modal-confirm');
+            const cancelBtn = document.getElementById('modal-cancel');
+
+            modalTitle.textContent = title;
+            modalContent.textContent = content;
+            modal.classList.remove('hidden');
+
+            confirmBtn.onclick = () => {
+                onConfirm();
+                modal.classList.add('hidden');
+            };
+            cancelBtn.onclick = () => modal.classList.add('hidden');
+        }
+
+        // Message auto-hide
+        document.addEventListener('DOMContentLoaded', () => {
+            const messages = document.querySelectorAll('[role="alert"]');
+            messages.forEach(message => {
+                setTimeout(() => {
+                    message.style.transition = 'opacity 1s ease-out';
+                    message.style.opacity = '0';
+                    setTimeout(() => message.remove(), 1000);
+                }, 5000);
+            });
+        });
+    </script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html> 

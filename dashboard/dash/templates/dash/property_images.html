@@ -1,0 +1,123 @@
+{% extends 'dash/base.html' %}
+
+{% block header %}
+Manage Property Images
+{% endblock %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto">
+    <div class="bg-white shadow rounded-lg overflow-hidden">
+        <div class="p-6">
+            <h3 class="text-lg font-medium text-gray-900 mb-4">Images for {{ property.title }}</h3>
+            
+            <!-- Image Upload Form -->
+            <form method="post" enctype="multipart/form-data" class="mb-6">
+                {% csrf_token %}
+                <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                    <div>
+                        <label for="{{ form.image.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                            Add New Image
+                        </label>
+                        <div class="mt-1">
+                            {{ form.image }}
+                        </div>
+                        {% if form.image.errors %}
+                        <p class="mt-2 text-sm text-red-600">{{ form.image.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+                    <div class="flex items-end">
+                        <div class="flex items-center">
+                            {{ form.is_main }}
+                            <label for="{{ form.is_main.id_for_label }}" class="ml-2 block text-sm text-gray-900">
+                                Set as main image
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-4">
+                    <button type="submit"
+                            class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                        Upload Image
+                    </button>
+                </div>
+            </form>
+
+            <!-- Existing Images -->
+            <div class="space-y-4">
+                <h4 class="text-lg font-medium text-gray-900">Current Images</h4>
+                <div class="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                    {% for image in property.images.all %}
+                    <div class="relative group">
+                        <img src="{{ image.image.url }}" alt="" class="w-full h-48 object-cover rounded-lg">
+                        {% if image.is_main %}
+                        <div class="absolute top-2 right-2">
+                            <span class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">
+                                Main Image
+                            </span>
+                        </div>
+                        {% endif %}
+                        <div class="absolute inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center rounded-lg">
+                            <form method="post" action="{% url 'dash:delete_property_image' property.id image.id %}" class="inline-block">
+                                {% csrf_token %}
+                                <button type="submit" class="text-white bg-red-600 hover:bg-red-700 px-3 py-1 rounded-md text-sm">
+                                    Delete
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Back Button -->
+        <div class="px-6 py-3 bg-gray-50">
+            <a href="{% url 'dash:property_edit' property.id %}"
+               class="inline-flex justify-center py-2 px-4 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                Back to Property
+            </a>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Style file inputs
+    const fileInputs = document.querySelectorAll('input[type="file"]');
+    fileInputs.forEach(input => {
+        input.classList.add(
+            'block',
+            'w-full',
+            'text-sm',
+            'text-gray-500',
+            'file:mr-4',
+            'file:py-2',
+            'file:px-4',
+            'file:rounded-full',
+            'file:border-0',
+            'file:text-sm',
+            'file:font-semibold',
+            'file:bg-indigo-50',
+            'file:text-indigo-700',
+            'hover:file:bg-indigo-100'
+        );
+    });
+
+    // Style checkboxes
+    const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+    checkboxes.forEach(checkbox => {
+        checkbox.classList.add(
+            'h-4',
+            'w-4',
+            'text-indigo-600',
+            'focus:ring-indigo-500',
+            'border-gray-300',
+            'rounded'
+        );
+    });
+});
+</script>
+{% endblock %} 

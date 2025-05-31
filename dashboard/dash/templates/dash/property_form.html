@@ -1,0 +1,290 @@
+{% extends 'dash/base.html' %}
+
+{% block header %}
+{% if property %}Edit Property{% else %}Add New Property{% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto">
+    <form method="post" enctype="multipart/form-data" class="space-y-8">
+        {% csrf_token %}
+        
+        <div class="bg-white shadow rounded-lg overflow-hidden">
+            <!-- Basic Information -->
+            <div class="p-6 space-y-6">
+                <h3 class="text-lg font-medium text-gray-900">Basic Information</h3>
+                <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
+                    <div>
+                        <label for="{{ form.title.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                            Title
+                        </label>
+                        <div class="mt-1">
+                            {{ form.title }}
+                        </div>
+                        {% if form.title.errors %}
+                        <p class="mt-2 text-sm text-red-600">{{ form.title.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+
+                    <div>
+                        <label for="{{ form.property_type.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                            Property Type
+                        </label>
+                        <div class="mt-1">
+                            {{ form.property_type }}
+                        </div>
+                        {% if form.property_type.errors %}
+                        <p class="mt-2 text-sm text-red-600">{{ form.property_type.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+
+                    <div>
+                        <label for="{{ form.price.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                            Price
+                        </label>
+                        <div class="mt-1">
+                            {{ form.price }}
+                        </div>
+                        {% if form.price.errors %}
+                        <p class="mt-2 text-sm text-red-600">{{ form.price.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+
+                    <div>
+                        <label for="{{ form.location.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                            Location
+                        </label>
+                        <div class="mt-1">
+                            {{ form.location }}
+                        </div>
+                        {% if form.location.errors %}
+                        <p class="mt-2 text-sm text-red-600">{{ form.location.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Property Details -->
+            <div class="p-6 space-y-6 border-t border-gray-200">
+                <h3 class="text-lg font-medium text-gray-900">Property Details</h3>
+                <div class="grid grid-cols-1 gap-6 sm:grid-cols-3">
+                    <div>
+                        <label for="{{ form.bedrooms.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                            Bedrooms
+                        </label>
+                        <div class="mt-1">
+                            {{ form.bedrooms }}
+                        </div>
+                        {% if form.bedrooms.errors %}
+                        <p class="mt-2 text-sm text-red-600">{{ form.bedrooms.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+
+                    <div>
+                        <label for="{{ form.bathrooms.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                            Bathrooms
+                        </label>
+                        <div class="mt-1">
+                            {{ form.bathrooms }}
+                        </div>
+                        {% if form.bathrooms.errors %}
+                        <p class="mt-2 text-sm text-red-600">{{ form.bathrooms.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+
+                    <div>
+                        <label for="{{ form.square_meters.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                            Square Meters
+                        </label>
+                        <div class="mt-1">
+                            {{ form.square_meters }}
+                        </div>
+                        {% if form.square_meters.errors %}
+                        <p class="mt-2 text-sm text-red-600">{{ form.square_meters.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Description -->
+            <div class="p-6 space-y-6 border-t border-gray-200">
+                <h3 class="text-lg font-medium text-gray-900">Description</h3>
+                <div>
+                    <label for="{{ form.description.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                        Description
+                    </label>
+                    <div class="mt-1">
+                        {{ form.description }}
+                    </div>
+                    {% if form.description.errors %}
+                    <p class="mt-2 text-sm text-red-600">{{ form.description.errors.0 }}</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Images -->
+            {% if not property %}
+            <div class="p-6 space-y-6 border-t border-gray-200">
+                <h3 class="text-lg font-medium text-gray-900">Property Images</h3>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">
+                        Upload Images
+                    </label>
+                    <div class="mt-1">
+                        <input type="file" name="images" multiple accept="image/*" class="block w-full text-sm text-gray-500
+                            file:mr-4 file:py-2 file:px-4
+                            file:rounded-full file:border-0
+                            file:text-sm file:font-semibold
+                            file:bg-indigo-50 file:text-indigo-700
+                            hover:file:bg-indigo-100">
+                    </div>
+                    <p class="mt-2 text-sm text-gray-500">You can select multiple images. The first image will be set as the main image.</p>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Publishing -->
+            <div class="p-6 space-y-6 border-t border-gray-200">
+                <div class="flex items-center">
+                    {{ form.is_published }}
+                    <label for="{{ form.is_published.id_for_label }}" class="ml-2 block text-sm text-gray-900">
+                        Publish this property
+                    </label>
+                </div>
+            </div>
+
+            <!-- Form Actions -->
+            <div class="px-6 py-3 bg-gray-50 text-right">
+                <a href="{% url 'dash:property_list' %}"
+                   class="inline-flex justify-center py-2 px-4 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 mr-3">
+                    Cancel
+                </a>
+                <button type="submit"
+                        class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                    {% if property %}Save Changes{% else %}Create Property{% endif %}
+                </button>
+            </div>
+        </div>
+    </form>
+</div>
+
+{% if property %}
+<!-- Property Images Section -->
+<div class="max-w-3xl mx-auto mt-8">
+    <div class="bg-white shadow rounded-lg overflow-hidden">
+        <div class="p-6">
+            <h3 class="text-lg font-medium text-gray-900 mb-4">Property Images</h3>
+            
+            <!-- Image Upload Form -->
+            <form method="post" action="{% url 'dash:property_images' property.id %}" enctype="multipart/form-data" class="mb-6">
+                {% csrf_token %}
+                <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                    <div>
+                        <label for="{{ image_form.image.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                            Add New Image
+                        </label>
+                        <div class="mt-1">
+                            {{ image_form.image }}
+                        </div>
+                    </div>
+                    <div class="flex items-end">
+                        <div class="flex items-center">
+                            {{ image_form.is_main }}
+                            <label for="{{ image_form.is_main.id_for_label }}" class="ml-2 block text-sm text-gray-900">
+                                Set as main image
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-4">
+                    <button type="submit"
+                            class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                        Upload Image
+                    </button>
+                </div>
+            </form>
+
+            <!-- Image Grid -->
+            <div class="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                {% for image in property.images.all %}
+                <div class="relative group">
+                    <img src="{{ image.image.url }}" alt="" class="w-full h-48 object-cover rounded-lg">
+                    {% if image.is_main %}
+                    <div class="absolute top-2 right-2">
+                        <span class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">
+                            Main Image
+                        </span>
+                    </div>
+                    {% endif %}
+                    <div class="absolute inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center rounded-lg">
+                        <form method="post" action="{% url 'dash:delete_property_image' property.id image.id %}" class="inline-block">
+                            {% csrf_token %}
+                            <button type="submit" class="text-white bg-red-600 hover:bg-red-700 px-3 py-1 rounded-md text-sm">
+                                Delete
+                            </button>
+                        </form>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Style form inputs
+    const inputs = document.querySelectorAll('input[type="text"], input[type="number"], textarea, select');
+    inputs.forEach(input => {
+        input.classList.add(
+            'mt-1',
+            'block',
+            'w-full',
+            'rounded-md',
+            'border-gray-300',
+            'shadow-sm',
+            'focus:border-indigo-500',
+            'focus:ring-indigo-500',
+            'sm:text-sm'
+        );
+    });
+
+    // Style file inputs
+    const fileInputs = document.querySelectorAll('input[type="file"]');
+    fileInputs.forEach(input => {
+        input.classList.add(
+            'block',
+            'w-full',
+            'text-sm',
+            'text-gray-500',
+            'file:mr-4',
+            'file:py-2',
+            'file:px-4',
+            'file:rounded-full',
+            'file:border-0',
+            'file:text-sm',
+            'file:font-semibold',
+            'file:bg-indigo-50',
+            'file:text-indigo-700',
+            'hover:file:bg-indigo-100'
+        );
+    });
+
+    // Style checkboxes
+    const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+    checkboxes.forEach(checkbox => {
+        checkbox.classList.add(
+            'h-4',
+            'w-4',
+            'text-indigo-600',
+            'focus:ring-indigo-500',
+            'border-gray-300',
+            'rounded'
+        );
+    });
+});
+</script>
+{% endblock %} 

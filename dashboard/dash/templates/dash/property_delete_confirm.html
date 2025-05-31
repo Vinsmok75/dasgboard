@@ -1,0 +1,60 @@
+{% extends 'dash/base.html' %}
+
+{% block header %}Delete Property{% endblock %}
+
+{% block content %}
+<div class="max-w-lg mx-auto">
+    <div class="bg-white shadow rounded-lg overflow-hidden">
+        <div class="p-6">
+            <div class="flex items-center justify-center w-12 h-12 rounded-full bg-red-100 mx-auto">
+                <svg class="h-6 w-6 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                </svg>
+            </div>
+            
+            <h3 class="mt-4 text-lg font-medium text-gray-900 text-center">Delete Property</h3>
+            
+            <div class="mt-4">
+                <div class="rounded-lg bg-gray-50 p-4">
+                    <div class="flex">
+                        {% if property.images.exists %}
+                            {% with main_image=property.images.first %}
+                                <img src="{{ main_image.image.url }}" alt="{{ property.title }}" class="h-24 w-24 object-cover rounded">
+                            {% endwith %}
+                        {% else %}
+                            <div class="h-24 w-24 bg-gray-200 rounded flex items-center justify-center">
+                                <svg class="h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                </svg>
+                            </div>
+                        {% endif %}
+                        <div class="ml-4 flex-1">
+                            <h4 class="text-lg font-medium text-gray-900">{{ property.title }}</h4>
+                            <p class="mt-1 text-sm text-gray-500">{{ property.location }}</p>
+                            <p class="mt-1 text-sm text-gray-500">${{ property.price|floatformat:2 }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <p class="mt-4 text-sm text-gray-500 text-center">
+                Are you sure you want to delete this property? This action cannot be undone.
+            </p>
+
+            <div class="mt-6 flex justify-center space-x-4">
+                <a href="{% url 'dash:property_list' %}" 
+                   class="inline-flex justify-center py-2 px-4 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                    Cancel
+                </a>
+                <form method="post" action="{% url 'dash:property_delete_confirm' property.id %}" class="inline">
+                    {% csrf_token %}
+                    <button type="submit"
+                            class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
+                        Delete Property
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 
